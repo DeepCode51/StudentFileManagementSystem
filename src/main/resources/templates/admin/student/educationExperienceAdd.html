@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>教育经历-添加</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/public/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/public/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">学号</label>
+        <div class="layui-input-block">
+            <input type="text" name="id" id="id" hidden="hidden">
+            <input type="text" name="studentNumber" id="studentNumber" lay-verify="required" lay-reqtext="学号不能为空"
+                   placeholder="请输入学号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">开始时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="startDate" id="startDate" lay-verify="required" lay-reqtext="开始时间不能为空"
+                   placeholder="请选择开始时间" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">结束时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="endDate" id="endDate" lay-verify="required" lay-reqtext="结束时间不能为空"
+                   placeholder="请选择结束时间" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">学校名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="schoolName" id="schoolName" lay-verify="required" lay-reqtext="学校名称不能为空"
+                   placeholder="请输入学校名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">在校职务</label>
+        <div class="layui-input-block">
+            <input type="text" name="positionName" id="positionName" lay-verify="required" lay-reqtext="在校职务不能为空"
+                   placeholder="请输入在校职务" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">证明人姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="certifierName" id="certifierName" lay-verify="required" lay-reqtext="证明人姓名不能为空"
+                   placeholder="请输入证明人姓名" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+        </div>
+    </div>
+</div>
+<script src="/public/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$,
+            laydate = layui.laydate;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        //日期
+        laydate.render({
+            elem: '#startDate',
+            trigger: 'click'
+        });
+
+        //日期
+        laydate.render({
+            elem: '#endDate',
+            trigger: 'click'
+        });
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            $.ajax({
+                url: '/api/v1/sfm/educationExperience/save',
+                method: 'post',
+                data: JSON.stringify(data.field),
+                contentType: "application/json",
+                success: function (res) {
+                    if (res.status === '200') {
+                        layer.msg("保存成功", {time: 500, icon: 1, offset: '60px'}, function () {
+                            // 关闭弹出层
+                            layer.close(parentIndex);
+                            // 重启加载父页面
+                            parent.location.reload();
+                        })
+                    } else {
+                        layer.msg(res.message, {time: 5000, icon: 2, offset: '60px'})
+                    }
+                }
+            });
+
+            return false;
+        });
+
+
+    });
+</script>
+</body>
+</html>

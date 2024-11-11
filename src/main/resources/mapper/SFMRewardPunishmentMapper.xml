@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.sfm.mapper.SFMRewardPunishmentMapper">
+
+    <select id="selectPageByParams" resultType="com.example.sfm.pojo.SFMRewardPunishment">
+        select
+            reward.*,
+            student.name as studentName,
+            student.number as studentNumber
+        from sfm_reward_punishment reward
+        left join sfm_student student on student.id = reward.student_id
+        <where>
+            and reward.del_flag = '0'
+            <if test="params.id != null and params.id != ''">
+                and reward.id = #{params.id}
+            </if>
+            <if test="params.studentId != null and params.studentId != ''">
+                and student.id = #{params.studentId}
+            </if>
+            <if test="params.studentNumber != null and params.studentNumber != ''">
+                and student.number = #{params.studentNumber}
+            </if>
+        </where>
+        order by reward.create_date desc
+    </select>
+
+</mapper>

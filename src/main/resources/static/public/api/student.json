@@ -1,0 +1,33 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "/web/admin/student/educationExperience"
+  },
+  "logoInfo": {
+    "title": "SFM SYSTEM",
+    "image": "/public/images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "学生管理",
+      "icon": "fa fa-file-text-o",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "教育经历",
+          "href": "/web/admin/student/educationExperience",
+          "icon": "fa fa-file-text-o",
+          "target": "_self"
+        },
+        {
+          "title": "奖惩记录",
+          "href": "/web/admin/student/rewardPunishment",
+          "icon": "fa fa-table",
+          "target": "_self"
+        }
+      ]
+    }
+  ]
+}

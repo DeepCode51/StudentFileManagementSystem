@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>教师管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/public/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/public/css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset" sec:authorize="hasAuthority('SFM_SYSTEM_ADMIN')">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">学院</label>
+                            <div class="layui-input-inline">
+                                <label for="collegeList"></label>
+                                <select name="collegeId" id="collegeList" lay-filter="collegeList" lay-search="">
+                                    <option value="">直接选择或搜索选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">教师</label>
+                            <div class="layui-input-inline">
+                                <label for="teacherList"></label>
+                                <select name="id" id="teacherList" lay-search="">
+                                    <option value="">直接选择或搜索选择</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">编号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="number" id="number" placeholder="请输入编号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container" sec:authorize="hasAnyAuthority('ORGANIZATION_TEACHER_CREATE', 'ORGANIZATION_TEACHER_DELETE')">
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add" sec:authorize="hasAuthority('ORGANIZATION_TEACHER_CREATE')"> 添加 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete" sec:authorize="hasAuthority('ORGANIZATION_TEACHER_DELETE')"> 删除 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar" sec:authorize="hasAnyAuthority('ORGANIZATION_TEACHER_UPDATE', 'ORGANIZATION_TEACHER_DELETE')">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit" sec:authorize="hasAuthority('ORGANIZATION_TEACHER_UPDATE')">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" sec:authorize="hasAuthority('ORGANIZATION_TEACHER_DELETE')">删除</a>
+        </script>
+
+    </div>
+</div>
+<script src="/public/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+
+        var collegeList, teacherList;
+
+        table.render({
+            elem: '#currentTableId',
+            url: '/api/v1/sfm/teacher/page',
+            method: 'post',
+            contentType: "application/json;charset=UTF-8",
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print'],
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.status === '200' ? 0 : 1, //解析接口状态
+                    "msg": res.message, //解析提示文本
+                    "count": res.data.total, //解析数据长度
+                    "data": res.data.records //解析数据列表
+                }
+            },
+            cols: [
+                [
+                    {type: "checkbox", width: 50},
+                    {field: 'number', minWidth: 150, title: '编号', sort: true},
+                    {field: 'name', minWidth: 150, title: '姓名', sort: true},
+                    {field: 'collegeName', minWidth: 150, title: '学院名称', sort: true},
+                    {title: '操作', width: 150, toolbar: '#currentTableBar', align: "center"}
+                ]
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true,
+            skin: 'line'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    searchParams: data.field
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                var index = layer.open({
+                    title: '添加教师',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '/web/admin/organization/teacherAdd',
+                    success: function (layero, index) {
+                        //获取子页面的元素，进行数据渲染
+                        var body = layer.getChildFrame('body', index);
+                        for (let i in collegeList) {
+                            body.find("#collegeList2").append("<option value=" + collegeList[i].id + ">" + collegeList[i].name + "</option>");
+                        }
+                        body.find("#collegeList2").val(data.collegeId);
+                        form.render('select');
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                if (data.length > 0) {
+                    var names = data.map(i => i.name).join(",")
+                    var ids = data.map(i => i.id)
+
+                    layer.confirm('确认删除 ' + names + " 吗？", function (index) {
+                        $.ajax({
+                            url: '/api/v1/sfm/teacher/batch/' + ids,
+                            method: 'delete',
+                            success: function (res) {
+                                if (res.status === '200') {
+                                    layer.msg("删除成功", {time: 500, icon: 1, offset: '60px'}, function () {
+                                        layer.close(index);
+                                        location.reload();
+                                    })
+                                } else {
+                                    layer.msg(res.message, {time: 5000, icon: 2, offset: '60px'})
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    layer.msg("请先选择要删除的记录", {time: 5000, icon: 3, offset: '60px'})
+                }
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+
+                var index = layer.open({
+                    title: '编辑教师',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '/web/admin/organization/teacherAdd',
+                    success: function(layero, index){
+                        //获取子页面的元素，进行数据渲染
+                        var body = layer.getChildFrame('body', index);
+                        body.find("#id").val(data.id);
+                        body.find("#number").val(data.number);
+                        body.find("#name").val(data.name);
+                        body.find("#password").val(data.password);
+                        for (let i in collegeList) {
+                            body.find("#collegeList2").append("<option value=" + collegeList[i].id + ">" + collegeList[i].name + "</option>");
+                        }
+                        body.find("#collegeList2").val(data.collegeId);
+                        form.render('select');
+                    },
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'delete') {
+                layer.confirm('确认删除 ' + data.name + " 吗？", function (index) {
+                    $.ajax({
+                        url: '/api/v1/sfm/teacher/' + data.id,
+                        method: 'delete',
+                        success: function (res) {
+                            if (res.status === '200') {
+                                layer.msg("删除成功", {time: 500, icon: 1, offset: '60px'}, function () {
+                                    layer.close(index);
+                                    location.reload();
+                                })
+                            } else {
+                                layer.msg(res.message, {time: 5000, icon: 2, offset: '60px'})
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        // 获取所有学院
+        $.ajax({
+            url: '/api/v1/sfm/college/all',
+            method: 'get',
+            success: function (res) {
+                if (res.status === '200') {
+                    collegeList = res.data;
+                    for (let i in res.data) {
+                        $("#collegeList").append("<option value=" + res.data[i].id + ">" + res.data[i].name + "</option>");
+                        form.render('select');
+                    }
+                }
+            }
+        });
+
+        // 获取所有教师
+        $.ajax({
+            url: '/api/v1/sfm/teacher/all',
+            method: 'get',
+            success: function (res) {
+                if (res.status === '200') {
+                    teacherList = res.data;
+                    for (let i in res.data) {
+                        $("#teacherList").append("<option value=" + res.data[i].id + ">" + res.data[i].name + "</option>");
+                        form.render('select');
+                    }
+                }
+            }
+        });
+
+        form.on('select(collegeList)', function (data) {
+            $("#teacherList").empty();
+            $("#teacherList").append("<option value=\"\">直接选择或搜索选择</option>");
+
+            let selectTeacherList = teacherList.filter(p => p.collegeId === data.value);
+            if (selectTeacherList) {
+                for (let i in selectTeacherList) {
+                    $("#teacherList").append("<option value=" + selectTeacherList[i].id + ">" + selectTeacherList[i].name + "</option>");
+                }
+            }
+
+            form.render("select");
+        })
+
+    });
+</script>
+
+</body>
+</html>

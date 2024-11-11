@@ -1,0 +1,65 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "/web/admin/student/studentInfo"
+  },
+  "logoInfo": {
+    "title": "SFM SYSTEM",
+    "image": "/public/images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "组织管理",
+      "icon": "fa fa-institution",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "学院管理",
+          "href": "/web/admin/organization/collegeManagement",
+          "icon": "fa fa-dot-circle-o",
+          "target": "_self"
+        },
+        {
+          "title": "专业管理",
+          "href": "/web/admin/organization/specialtyManagement",
+          "icon": "fa fa-adn",
+          "target": "_self"
+        },
+        {
+          "title": "班级管理",
+          "href": "/web/admin/organization/classManagement",
+          "icon": "fa fa-compass",
+          "target": "_self"
+        }
+      ]
+    },
+    {
+      "title": "学生管理",
+      "icon": "fa fa-file-text-o",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "学生信息",
+          "href": "/web/admin/student/studentInfo",
+          "icon": "fa fa-male",
+          "target": "_self"
+        },
+        {
+          "title": "教育经历",
+          "href": "/web/admin/student/educationExperience",
+          "icon": "fa fa-file-text-o",
+          "target": "_self"
+        },
+        {
+          "title": "奖惩记录",
+          "href": "/web/admin/student/rewardPunishment",
+          "icon": "fa fa-table",
+          "target": "_self"
+        }
+      ]
+    }
+  ]
+}

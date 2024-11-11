@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/public/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/public/css/public.css" media="all">
+</head>
+<body>
+<style>
+    .layui-form-item .layui-input-company {
+        width: auto;
+        padding-right: 10px;
+        line-height: 38px;
+    }
+</style>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div class="layui-form layuimini-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">学号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id" id="id" hidden="hidden">
+                    <input type="text" name="number" id="number" lay-verify="required" lay-reqtext="学号不能为空"
+                           class="layui-input" disabled="disabled">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">姓名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" id="name" lay-verify="required" lay-reqtext="姓名不能为空"
+                           placeholder="请输入姓名"
+                           class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="gender" value="1" title="男" checked="checked">
+                    <input type="radio" name="gender" value="2" title="女">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">民族</label>
+                <div class="layui-input-block">
+                    <input type="text" name="nation" id="nation" lay-verify="required" lay-reqtext="民族不能为空"
+                           placeholder="请输入民族"
+                           class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">出生日期</label>
+                <div class="layui-input-block">
+                    <input type="text" name="birthdate" id="birthdate" lay-verify="required" lay-reqtext="出生日期不能为空"
+                           placeholder="请输入出生日期" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">籍贯</label>
+                <div class="layui-input-block">
+                    <input type="text" name="nativePlace" id="nativePlace" lay-verify="required" lay-reqtext="籍贯不能为空"
+                           placeholder="请输入籍贯" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">家庭住址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="homeAddress" id="homeAddress" lay-verify="required" lay-reqtext="家庭住址不能为空"
+                           placeholder="请输入家庭住址" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">身份证号码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="idCard" id="idCard" lay-verify="required" lay-reqtext="身份证号码不能为空"
+                           placeholder="请输入身份证号码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">登录密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="password" id="password" lay-verify="required" lay-reqtext="登录密码不能为空"
+                           placeholder="请输入登录密码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">免冠照片</label>
+                <div class="layui-input-block">
+                    <div class="layui-upload-drag" id="test10">
+                        <i class="layui-icon"></i>
+                        <p>点击上传，或将文件拖拽到此处</p>
+                        <div class="layui-hide" id="uploadDemoView">
+                            <hr>
+                            <img src="" alt="上传成功后渲染" id="bareheadedPhoto" style="max-width: 196px">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/public/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/public/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'miniTab', 'laydate', 'upload'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$,
+            miniTab = layui.miniTab,
+            laydate = layui.laydate,
+            upload = layui.upload;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        //日期
+        laydate.render({
+            elem: '#birthdate',
+            trigger: 'click'
+        });
+
+        //拖拽上传
+        upload.render({
+            elem: '#test10'
+            ,url: '/api/v1/upload/image'
+            ,done: function(res){
+                if (res.status === '200') {
+                    $('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.data);
+                    layer.msg('上传成功');
+                } else {
+                    layer.msg(res.message, {time: 5000, icon: 2, offset: '60px'})
+                }
+            }
+        });
+
+        // 获取当前登录用户的信息
+        $.ajax({
+            url: "/api/v1/user/userInfo",
+            method: 'GET',
+            success: function (res) {
+                if (res.status === '200') {
+                    data = res.data.userInfo
+                    $("#id").val(data.id);
+                    $("#number").val(data.number);
+                    $("#name").val(data.name);
+                    $("input[name=gender][value='1']").attr("checked", data.gender === '1');
+                    $("input[name=gender][value='2']").attr("checked", data.gender === '2');
+                    $("#nation").val(data.nation);
+                    $("#birthdate").val(data.birthdate);
+                    $("#nativePlace").val(data.nativePlace);
+                    $("#idCard").val(data.idCard);
+                    $("#homeAddress").val(data.homeAddress);
+                    $("#password").val(data.password);
+                    if (data.bareheadedPhoto) {
+                        $('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', data.bareheadedPhoto);
+                    }
+                    form.render();
+                }
+            }
+        })
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var bareheadedPhoto = $("#bareheadedPhoto")[0].src
+            if (bareheadedPhoto && bareheadedPhoto.startsWith("data:image")) {
+                data.field['bareheadedPhoto'] = bareheadedPhoto
+            }
+            $.ajax({
+                url: '/api/v1/user/update/currentLoginUser',
+                method: 'post',
+                data: JSON.stringify(data.field),
+                contentType: "application/json",
+                success: function (res) {
+                    if (res.status === '200') {
+                        layer.msg("保存成功", {time: 500, icon: 1, offset: '60px'})
+                    } else {
+                        layer.msg(res.message, {time: 5000, icon: 2, offset: '60px'})
+                    }
+                }
+            });
+
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>
